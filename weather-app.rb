@@ -1,26 +1,29 @@
-require "yahoo_weatherman" 
+require 'yahoo_weatherman'
  
+def get_location(location)
+  client = Weatherman::Client.new
+  client.lookup_by_location(location)
+end
  
- def weather_today(location) 
-    
-   client = Weatherman::Client.new 
+weather = get_location('location')
  
+today = Time.now.strftime('%w').to_i
  
-   weather = client.lookup_by_location(location) 
+weather.forecasts.each do |forecast|
  
+day = forecast['date']
  
-   condition = weather.condition["text"] 
+weekday = day.strftime('%w').to_i
  
+if weekday == today
+   dayName = 'Today'
+elsif weekday == today + 1
+   dayName = 'Tomorrow'
+else
+   dayName = day.strftime('%A')
+end
  
-   puts "The weather today is #{condition.downcase}." 
+puts dayName + ' is going to be ' + forecast['text'].downcase + ' with a low of ' + forecast['low'].to_s + ' and a high of ' + forecast['high'].to_s
  
- 
- end 
- 
- 
- puts "Please insert your zip code:" 
- location = gets.chomp 
-
- 
- weather_today(location) 
+end
 
